@@ -155,7 +155,7 @@
     }
     public function whoAmI()
     {
-      echo "<img src='{$this->url_image}' alt='Pokemon Image' />";
+      echo '<img src="images_tp_web/' . $this->url_image . '" alt="Pokemon Image" />';
       echo "<p>Name : {$this->name}</p>";
       echo "<p>HP : {$this->hp}</p>";
       echo "<p>Min Attack Points :  {$this->attackPokemon->getAttackMinimal()}</p>";
@@ -163,6 +163,77 @@
       echo "<p>Special Attack :  {$this->attackPokemon->getSpecialAttack()}</p>";
       echo "<p>Probability of Special Attack :  {$this->attackPokemon->getProbabilitySpecialAttack()} %</p>";
     }
+  }
+  // Creating instances of Pokemons to be our fighting characters
+  //Let's start with the attacks 
+  $attackPikatchu = new AttackPokemon(10, 80, 2, 25);
+  $attackBulbasaur = new AttackPokemon(20, 70, 3, 20);
+  $attackCharizard = new AttackPokemon(30, 60, 2, 50);
+  $attackWartortle = new AttackPokemon(20, 75, 4, 15);
+  //Now let's create the pokemons
+  $pikatchu = new Pokemon("Pikatchu", "pikatchu.png", 200, $attackPikatchu);
+  $bulbasaur = new Pokemon("Bulbasaur", "bulbasaur.webp", 200, $attackBulbasaur);
+  $charizard = new Pokemon("Charizard", "charizard.png", 200, $attackCharizard);
+  $wartortle = new Pokemon("Wartortle", "wartortle.png", 200, $attackWartortle);
+  $pokemons = array($pikatchu, $bulbasaur, $charizard, $wartortle);
+  //At this point we will get two pokemons chosen by the user and simulate the battle we will do that using a form 
+  ?>
+  <form method="post">
+    <label for="pokemon1">Choose your first Pokemon:</label><br>
+    <input type="radio" name="pokemon1" id="pokemon1" value="Pikatchu">Pikatchu<br>
+    <input type="radio" name="pokemon1" id="pokemon1" value="Bulbasaur">Bulbasaur<br>
+    <input type="radio" name="pokemon1" id="pokemon1" value="Charizard">Charizard<br>
+    <input type="radio" name="pokemon1" id="pokemon1" value="Wartortle">Wartortle<br>
+    <label for="pokemon2">Choose your second Pokemon:</label><br>
+    <input type="radio" name="pokemon2" id="pokemon2" value="Pikatchu">Pikatchu<br>
+    <input type="radio" name="pokemon2" id="pokemon2" value="Bulbasaur">Bulbasaur<br>
+    <input type="radio" name="pokemon2" id="pokemon2" value="Charizard">Charizard<br>
+    <input type="radio" name="pokemon2" id="pokemon2" value="Wartortle">Wartortle<br>
+    <input type="submit" value="Fight!" /><br>
+  </form>
+  <?php
+  //We will now get the values of the selected pokemons
+  if (isset($_POST['pokemon1']) && isset($_POST['pokemon2'])) {
+    $pokemon1 = $_POST['pokemon1'];
+    $pokemon2 = $_POST['pokemon2'];
+    //We will now get the instances of the selected pokemons
+    $p1 = null;
+    $p2 = null;
+    foreach ($pokemons as $p) {
+      if ($p->getName() == $pokemon1) {
+        $p1 = $p;
+      }
+      if ($p->getName() == $pokemon2) {
+        $p2 = $p;
+      }
+    }
+    //Now we will simulate the battle
+    $round = 1;
+    echo "The Fight Starts !<br>";
+    $p1->whoAmI();
+    echo "<br>";
+    $p2->whoAmI();
+    echo "<br>";
+    while (!$p1->isDead() && !$p2->isDead()) {
+      echo "Round $round<br>";
+      $p1->attack($p2);
+      if (!$p2->isDead()) {
+        $p2->attack($p1);
+      }
+      $p1->whoAmI();
+      echo "<br>";
+      $p2->whoAmI();
+      echo "<br>";
+      $round++;
+    }
+    //We will now display the result of the battle
+    if ($p1->isDead()) {
+      echo "<h1>{$p2->getName()} is our winner !</h1>";
+    } else {
+      echo "<h1>{$p1->getName()} is our winner !</h1>";
+    }
+  } else {
+    echo "<h1>Please select two pokemons to fight</h1>";
   }
   ?>
 </body>
